@@ -1,0 +1,199 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="2024.01-1" author="710074814">
+        <createTable tableName="ea_survey">
+            <column name="survey_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar2(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="start_time" type="datetime" />
+            <column name="end_time" type="datetime" />
+        </createTable>
+
+        <createTable tableName="ea_question_type">
+            <column name="question_type_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar2(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable tableName="ea_question_type_option">
+            <column name="question_type_option_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="question_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="value" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="alias" type="varchar2(100)" />
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="ea_question_type_option" baseColumnNames="question_type_id"
+                                 constraintName="fk_question_type_question_type_option"
+                                 referencedTableName="ea_question_type" referencedColumnNames="question_type_id"
+                                 onDelete="CASCADE"
+        />
+
+        <createTable tableName="ea_question">
+            <column name="question_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="body" type="varchar2(200)">
+                <constraints nullable="false" />
+            </column>
+            <column name="question_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="ea_question" baseColumnNames="question_type_id"
+                                 constraintName="fk_question_type_question"
+                                 referencedTableName="ea_question_type" referencedColumnNames="question_type_id"
+                                 onDelete="CASCADE"
+        />
+
+        <createTable tableName="ea_mcq_option">
+            <column name="mcq_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="question_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="value" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="alias" type="varchar2(200)" />
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="ea_mcq_option" baseColumnNames="question_id"
+                                 constraintName="fk_question_mcp_option"
+                                 referencedTableName="ea_question" referencedColumnNames="question_id"
+                                 onDelete="CASCADE"
+        />
+
+        <createTable tableName="ea_survey_question">
+            <column name="survey_id" type="bigint">
+                <constraints primaryKey="true"
+                             primaryKeyName="pk_survey_question"
+                             nullable="false"
+                />
+            </column>
+            <column name="question_id" type="bigint">
+                <constraints primaryKey="true"
+                             primaryKeyName="pk_survey_question"
+                             nullable="false"
+                />
+            </column>
+            <column name="priority" type="int" />
+        </createTable>
+
+        <createTable tableName="ea_airport">
+            <column name="airport_id" type="char(3)">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar2(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        
+        <createTable tableName="ea_airport_lounge">
+            <column name="airport_lounge_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar2(200)">
+                <constraints nullable="false" />
+            </column>
+            <column name="airport_id" type="char(3)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="ea_airport_lounge" baseColumnNames="airport_id"
+                                 constraintName="fk_airport_airport_lounge"
+                                 referencedTableName="ea_airport" referencedColumnNames="airport_id"
+                                 onDelete="CASCADE"
+        />
+
+        <createTable tableName="ea_facility_type">
+            <column name="facility_type_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable tableName="ea_facility">
+            <column name="facility_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="airport_lounge_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar2(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar2(200)" />
+            <column name="image_url" type="varchar2(200)" />
+            <column name="facility_type_id" type="bigint" />
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="ea_facility" baseColumnNames="airport_lounge_id"
+                                 constraintName="fk_airport_lounge_facility"
+                                 referencedTableName="ea_airport_lounge" referencedColumnNames="airport_lounge_id"
+                                 onDelete="CASCADE"
+        />
+
+        <addForeignKeyConstraint baseTableName="ea_facility" baseColumnNames="facility_type_id"
+                                 constraintName="fk_facility_type_facility"
+                                 referencedTableName="ea_facility_type" referencedColumnNames="facility_type_id"
+                                 onDelete="CASCADE"
+        />
+
+        <createTable tableName="ea_survey_question_response">
+            <column name="survey_question_response_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="survey_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="question_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="facility_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="timestamp" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="response" type="varchar2(500)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint baseTableName="ea_survey_question_response" baseColumnNames="survey_id"
+                                 constraintName="fk_survey_survey_question_response"
+                                 referencedTableName="ea_survey" referencedColumnNames="survey_id"
+                                 onDelete="CASCADE"
+        />
+
+        <addForeignKeyConstraint baseTableName="ea_survey_question_response" baseColumnNames="question_id"
+                                 constraintName="fk_question_survey_question_response"
+                                 referencedTableName="ea_question" referencedColumnNames="question_id"
+                                 onDelete="CASCADE"
+        />
+
+        <addForeignKeyConstraint baseTableName="ea_survey_question_response" baseColumnNames="facility_id"
+                                 constraintName="fk_facility_survey_question_response"
+                                 referencedTableName="ea_facility" referencedColumnNames="facility_id"
+                                 onDelete="CASCADE"
+        />
+    </changeSet>
+
+</databaseChangeLog>
